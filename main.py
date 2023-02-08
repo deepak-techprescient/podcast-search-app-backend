@@ -8,6 +8,6 @@ class Source(str, Enum):
     APPLE = "apple",
 
 
-@app.get("/podcasts/")
+@app.get("/podcast")
 async def get_podcast(source: Source, id: int = Query(ge=0)):
     return {"source": source, "id": id}
