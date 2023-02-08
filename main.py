@@ -1,8 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
+from enum import Enum
 
 app = FastAPI()
 
 
-@app.get("/")
-async def test():
-    return {"message": "Hello World!"}
+class Source(str, Enum):
+    APPLE = "apple",
+
+
+@app.get("/podcasts/")
+async def get_podcast(source: Source, id: int = Query(ge=0)):
+    return {"source": source, "id": id}
