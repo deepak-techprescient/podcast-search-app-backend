@@ -51,7 +51,6 @@ async def get_podcast(source: str, id: str):
         "genres": first_result.get("genres", []),
         "image": first_result.get("artworkUrl600", ""),
         "totalEpisodes": first_result.get("trackCount", 0),
-        "releaseDate": first_result.get("releaseDate", ""),
     }
 
     rss_feed_url = first_result.get("feedUrl", "")
@@ -74,9 +73,13 @@ async def get_podcast(source: str, id: str):
 
                 items = rss_data.get("rss", {}).get("channel", {}).get("item", [])
                 if isinstance(items, list):
+                    start_date = items[-1].get("pubDate", "")
                     last_episode_date = items[0].get("pubDate", "")
+
                 else:
-                    last_episode_date = items.get("pubDate", "")
+                    start_date = last_episode_date = items.get("pubDate", "")
+
+                podcast_data["startDate"] = start_date
                 podcast_data["lastEpisodeReleaseDate"] = last_episode_date
 
     return podcast_data
