@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import requests
 import xmltodict
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 import os
 
 load_dotenv()
@@ -66,7 +67,11 @@ async def get_podcast(source: str, id: str):
                 podcast_data["isRssAvailable"] = False
             else:
                 podcast_data["isRssAvailable"] = True
-                podcast_data["summary"] = rss_data.get("rss", {}).get("channel", {}).get("description", "")
+                summary = rss_data.get("rss", {}).get("channel", {}).get("description", "")
+                if summary:
+                    soup = BeautifulSoup(summary, "html.parser")
+                    podcast_data["summary"] = soup.get_text()
+
                 items = rss_data.get("rss", {}).get("channel", {}).get("item", [])
                 if isinstance(items, list):
                     last_episode_date = items[0].get("pubDate", "")
